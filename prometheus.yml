@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'syncthing'
+    static_configs:
+      - targets: ['syncthing:8384']
+        labels:
+          instance: 'syncthing'
+    metrics_path: /rest/system/connections
+    params:
+      format: ["prometheus"]

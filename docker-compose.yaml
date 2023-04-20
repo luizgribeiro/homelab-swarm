@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
+  syncthing:
+    image: syncthing/syncthing
+    container_name: syncthing
+    environment:
+      - GUI_ENABLED=true  # Enable the web interface
+    volumes:
+      - ./syncthing:/var/syncthing
+    ports:
+      - "8384:8384"
+      - "22000:22000"
+      - "21027:21027/udp"
+    command: ["-no-browser", "-no-restart", "-gui-address=0.0.0.0:8384", "-metrics-address=0.0.0.0:8385"]
