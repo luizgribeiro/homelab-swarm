@@ -16,10 +16,33 @@ services:
     container_name: syncthing
     environment:
       - GUI_ENABLED=true  # Enable the web interface
+      - TZ=America/Sao_Paulo
+      - PASSWORD=test
     volumes:
       - ./syncthing:/var/syncthing
     ports:
       - "8384:8384"
       - "22000:22000"
       - "21027:21027/udp"
-    command: ["-no-browser", "-no-restart", "-gui-address=0.0.0.0:8384", "-metrics-address=0.0.0.0:8385"]
+    network_mode: host
+    restart: unless-stopped
+    command: ["-no-browser", "-no-restart", "-gui-address=0.0.0.0:8384"]
+
+  pihole:
+    image: pihole/pihole:v5.8
+    environment:
+      #TZ: 'America/New_York'
+      WEBPASSWORD: 'your_password_here'
+    volumes:
+      - './pihole/etc-pihole/:/etc/pihole/'
+      - './pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/'
+    ports:
+      - '1102:53/tcp'
+      - '1102:53/udp'
+      - '80:80/tcp'
+      - '443:443/tcp'
+    deploy:
+      replicas: 1
+        #placement:
+        #constraints:
+        #- node.role == worker
